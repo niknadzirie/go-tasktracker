@@ -33,6 +33,17 @@ func (r *jsonRepository) ReadAllFromJsonFile() ([]model.Task, error) {
 }
 
 func (r *jsonRepository) WriteAllToJsonFile(tasks []model.Task) error {
+
+	if err := r.file.Truncate(0); err != nil {
+		fmt.Println("Error truncating line: ", err)
+		return err
+	}
+
+	if _, err := r.file.Seek(0, 0); err != nil {
+		fmt.Println("Error seeking file: ", err)
+		return err
+	}
+
 	encoder := json.NewEncoder(r.file)
 	encoder.SetIndent("", "  ")
 	if err := encoder.Encode(tasks); err != nil {
